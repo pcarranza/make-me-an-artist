@@ -10,6 +10,11 @@ describe "Github" do
     fetcher
   end
 
+  it "builds with a username only" do
+    github = Github.new(username: "pcarranza")
+    expect(github).not_to be_nil
+  end
+
   it "fetches contributions" do
     github = Github.new(username: "pcarranza", fetcher: fetcher)
     github.fetch_contributions
