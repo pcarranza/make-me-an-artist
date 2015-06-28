@@ -25,3 +25,4 @@ PLATFORMS
 DEPENDENCIES
   faraday (~> 0.9)
   rspec (~> 3.3)
+  rspec-mocks (~> 3.3)

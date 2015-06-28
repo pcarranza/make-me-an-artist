@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 gem "faraday", "~>0.9"
 
-group :development do
-  gem "rspec", '~>3.3', require: false
+group :test do
+  gem "rspec", '~>3.3', require: true
+  gem "rspec-mocks", "~>3.3", require: true
 end
