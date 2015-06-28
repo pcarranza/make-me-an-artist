@@ -27,6 +27,7 @@ describe "GithubContributions" do
   it "parses the fetched contributions" do
     contributions = GithubContributions.new("my_user", connection: connection)
     contributions.fetch
+    contributions.parse
     expect(contributions.week(1).day(1)).to eq(0)
     expect(contributions.week(2).day(2)).to eq(7)
     expect(contributions.week(2).day(6)).to eq(4)
