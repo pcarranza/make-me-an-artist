@@ -3,33 +3,26 @@ require "faraday"
 class Github
   def initialize(**options)
     @username = options.fetch(:username)
-    @github_contributions = options.fetch(:contributions, GithubContributions.new(@username))
+    @github_contributions = options.fetch(:contributions) { Contributions.new(@username) }
   end
   def fetch_contributions
     @github_contributions.fetch
   end
 end
 
-class GithubContributions
-  def initialize(username, **options)
+class Contributions
+  def initialize(**options)
     @connection = options.fetch(:connection) do
-      Faraday.new(url: "https://github.com/users/#{username}/contributions") do |faraday|
+      Faraday.new(url: "https://github.com/users/#{options.fetch(:username)}/contributions") do |faraday|
         faraday.adapter Faraday.default_adapter
       end
     end
   end
   def fetch
-    @contributions_html = @connection.get.body
+    @contributions = ContributionsParser.new.parse(@connection.get.body)
   end
-  def parse
-    pattern = /data-count="(?<count>\d+)" data-date="(?<date>\d{4}-\d{2}-\d{2})"/
-    matched_values = @contributions_html.to_enum(:scan, pattern).map { Regexp.last_match }
-    parsed_values = matched_values.map do |values|
-      Contribution.new(values[:count], values[:date])
-    end
-  end
-  def week(number)
-    Week.new
+  def [](index)
+    @contributions[index]
   end
 end
 
@@ -40,30 +33,13 @@ class Contribution
   end
 end
 
-
 class ContributionsParser
-  def initialize(contributions)
-    @contributions = contributions
+  def initialize
+    @pattern = /data-count="(?<count>\d+)" data-date="(?<date>\d{4}-\d{2}-\d{2})"/
   end
-  def parse
-    @contributions.to_enum(:scan, /data-count="(\d+)" data-date="(\d{4}-\d{2}-\d{2})"/)
-    # .map { |value| value }
-    # parsed_values = matched_values.map do |value|
-    #   Contribution.new(count: value[1], date: value[2])
-    # end
-
-  end
-end
-
-class Week
-  def day(day_of_week)
-    case day_of_week
-    when 0, 1, 3, 4, 5
-      0
-    when 2
-      7
-    when 6
-      4
+  def parse(html)
+    html.to_enum(:scan, @pattern).map { Regexp.last_match }.map do |values|
+      Contribution.new(values[:count].to_i, values[:date])
     end
   end
 end
