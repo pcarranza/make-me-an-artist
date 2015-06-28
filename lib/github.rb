@@ -1,13 +1,17 @@
 require "faraday"
+require "forwardable"
 
 class Github
+  attr_reader :contributions, :max_contribution
   def initialize(**options)
-    @username = options.fetch(:username)
-    @contributions_fetcher = options.fetch(:fetcher) { ContributionsFetcher.new(@username) }
+    @contributions_fetcher = options.fetch(:fetcher) do
+      ContributionsFetcher.new(options.fetch(:username))
+    end
   end
 
   def fetch_contributions
-    @contributions_fetcher.fetch
+    @contributions = @contributions_fetcher.fetch
+    @max_contribution = @contributions.max_by(&:count)
   end
 end
 

@@ -1,12 +1,29 @@
 require "spec_helper"
 
 describe "Github" do
+  let (:contributions) do
+    [Contribution.new(1, "2014-06-12"), Contribution.new(0, "2014-06-13")]
+  end
+  let (:fetcher) do
+    fetcher = double()
+    allow(fetcher).to receive(:fetch).and_return(contributions)
+    fetcher
+  end
+
   it "fetches contributions" do
-    contributions = double()
-    allow(contributions).to receive(:fetch).and_return(:sentinel)
-    github = Github.new(username: "pcarranza", fetcher: contributions)
-    github_contributions = github.fetch_contributions
-    expect(github_contributions).to eq :sentinel
+    github = Github.new(username: "pcarranza", fetcher: fetcher)
+    github.fetch_contributions
+    expect(github.contributions).to eq contributions
+  end
+
+  it "picks the maximun contribution" do
+    github = Github.new(username: "pcarranza", fetcher: fetcher)
+    github.fetch_contributions
+    expect(github.max_contribution).to eq Contribution.new(1, "2014-06-12")
+  end
+
+  it "fails without a username or fetcher" do
+    expect { Github.new }.to raise_error(KeyError)
   end
 end
 
