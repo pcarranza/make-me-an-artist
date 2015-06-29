@@ -92,9 +92,3 @@ class ContributionsParser
     end
   end
 end
-
-class CommitPlanner
-  def initialize(github: github)
-    @github = github
-  end
-end
