@@ -1,4 +1,5 @@
 require "faraday"
+require "date"
 
 class Github
   def initialize(**options)
@@ -31,11 +32,15 @@ class Contribution
   attr_reader :count, :date
 
   def initialize(count, date)
-    @count, @date = count, date
+    @count, @date = count, Date.parse(date)
   end
 
   def ==(other)
     other.class == self.class && other.state == self.state
+  end
+
+  def first_day_of_week?
+    date.sunday?
   end
 
   protected
@@ -70,10 +75,26 @@ class Contributions
     @max ||= @contributions.max_by(&:count)
   end
 
+  def each
+    @contributions.each do |contribution|
+      yield contribution
+    end
+  end
+
   def baseline_commits
     baseline = max.count + 1
     baseline = 10 * (baseline.to_f / (10 ** (Math.log10(baseline).ceil - 1))).ceil if baseline > 10
     baseline = 10 if baseline < 10
     baseline
+  end
+
+  def first_full_week
+    @contributions[days_to_skip]
+  end
+
+  def days_to_skip
+    first_contribution = @contributions.first
+    return 0 if first_contribution.first_day_of_week?
+    7 - first_contribution.date.wday
   end
 end

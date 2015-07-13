@@ -1,11 +1,9 @@
-require "github"
-
 class CommitRanges
 
   RANGE_NAMES = [:zero, :low, :mid, :high, :max]
 
   def initialize(**options)
-    baseline = Contributions.new(options).baseline_commits
+    baseline = options.fetch(:contributions).baseline_commits
     @commit_ranges = RANGE_NAMES.each_with_index.map {|range_name, index|
       [range_name, (baseline) * index]
     }.to_h

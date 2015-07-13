@@ -65,5 +65,26 @@ describe "Contributions" do
     contributions = Contributions.new(contributions: [Contribution.new(12, "2014-06-11")])
     expect(contributions.baseline_commits).to eq(20)
   end
-end
 
+  context "with some fixed contributions" do
+    let(:contributions) do
+      Contributions.new(contributions: [
+                        Contribution.new(0, "2014-06-11"),
+                        Contribution.new(7, "2014-06-12"),
+                        Contribution.new(0, "2014-06-13"),
+                        Contribution.new(4, "2014-06-14"),
+                        Contribution.new(3, "2014-06-15"),
+                        Contribution.new(2, "2014-06-16"),
+                        Contribution.new(1, "2014-06-17"),
+                        Contribution.new(0, "2014-06-18"),
+                        Contribution.new(3, "2014-06-19"),
+                        Contribution.new(2, "2014-06-20"),
+                        Contribution.new(1, "2014-06-21"),
+                        Contribution.new(0, "2014-06-22")
+      ])
+    end
+    it "finds the first full week" do
+      expect(contributions.first_full_week.date).to eq(Date.parse("2014-06-15"))
+    end
+  end
+end

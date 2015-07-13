@@ -2,12 +2,12 @@ require "spec_helper"
 
 describe "CommitRanges" do
   let(:contributions) do
-    [
+    Contributions.new(contributions: [
       Contribution.new(0, "2014-06-01"),
       Contribution.new(9, "2014-06-02"),
       Contribution.new(4, "2014-06-03"),
       Contribution.new(1, "2014-06-04"),
-      Contribution.new(0, "2014-06-05")]
+      Contribution.new(0, "2014-06-05")])
   end
 
   it "calculates the basic case correctly" do
@@ -17,12 +17,14 @@ describe "CommitRanges" do
   end
 
   it "calculates the commit ranges fine with a larger ranges starting on the next tens" do
-    ranges = CommitRanges.new(contributions: [Contribution.new(23, "2014-06-01")])
+    ranges = CommitRanges.new(contributions: Contributions.new(
+      contributions: [Contribution.new(23, "2014-06-01")]))
     expect(ranges.to_h).to eq(0 => 0, 1 => 30, 2 => 60, 3 => 90, 4 => 120)
   end
 
   it "calculates the commit ranges fine with a larger ranges also on the tens" do
-    ranges = CommitRanges.new(contributions: [Contribution.new(30, "2014-06-01")])
+    ranges = CommitRanges.new(contributions: Contributions.new(
+      contributions: [Contribution.new(30, "2014-06-01")]))
     expect(ranges.to_h).to eq(0 => 0, 1 => 40, 2 => 80, 3 => 120, 4 => 160)
   end
 
