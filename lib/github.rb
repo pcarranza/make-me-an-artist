@@ -32,7 +32,7 @@ class Contribution
   attr_reader :count, :date
 
   def initialize(count, date)
-    @count, @date = count, Date.parse(date)
+    @count, @date = count, Date.parse(date.to_s)
   end
 
   def ==(other)
@@ -88,13 +88,22 @@ class Contributions
     baseline
   end
 
-  def first_full_week
-    @contributions[days_to_skip]
+  def first_commitable_date
+      @contributions[days_to_skip].date
   end
 
   def days_to_skip
     first_contribution = @contributions.first
     return 0 if first_contribution.first_day_of_week?
     7 - first_contribution.date.wday
+  end
+
+  def is_valid_date?(date)
+    date >= @contributions.first.date && date <= @contributions.last.date
+  end
+
+  def find_by_date(date)
+    fail "Invalid date" unless is_valid_date?(date)
+    @contributions[(date - first_commitable_date).to_i + days_to_skip]
   end
 end

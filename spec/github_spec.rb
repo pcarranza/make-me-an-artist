@@ -44,6 +44,8 @@ describe "ContributionsFetcher" do
 end
 
 describe "Contributions" do
+
+
   it "picks the maximun contribution from all" do
     contributions = Contributions.new(contributions: [
                                       Contribution.new(0, "2014-06-11"),
@@ -84,7 +86,17 @@ describe "Contributions" do
       ])
     end
     it "finds the first full week" do
-      expect(contributions.first_full_week.date).to eq(Date.parse("2014-06-15"))
+      expect(contributions.first_commitable_date).to eq(Date.parse("2014-06-15"))
+    end
+    it "finds the first full week with contributions starting in sunday" do
+      expect(Contributions.new(contributions: [Contribution.new(0, "2014-07-13")]).first_commitable_date).
+        to eq(Date.parse("2014-07-13"))
+    end
+    it "finds a given contribution by date" do
+      expect(contributions.find_by_date(Date.parse("2014-06-15"))).to eq(
+        Contribution.new(3, "2014-06-15"))
+      expect(contributions.find_by_date(Date.parse("2014-06-19"))).to eq(
+        Contribution.new(3, "2014-06-19"))
     end
   end
 end
