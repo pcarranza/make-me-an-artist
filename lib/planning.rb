@@ -10,7 +10,7 @@ class CommitRanges
     @one_less_map = RANGE_NAMES.each_with_index.map {|range_name, index|
       [range_name, RANGE_NAMES[index - 1]]
     }.to_h
-    @one_less_map.delete(:zero)
+    @one_less_map[:zero] = :zero
   end
 
   def [](range_name)
@@ -31,7 +31,7 @@ class CommitRanges
   end
 
   def name_for(target_value)
-    RANGE_NAMES[target_value]
+    RANGE_NAMES[target_value] or fail "Could not get range name for #{target_value}"
   end
 
   def to_h
@@ -45,6 +45,7 @@ end
 class RangePair
   attr_reader :low, :high
   def initialize(low, high)
+    fail "Invalid range pair #{low}-#{high}" unless low && high
     @low, @high = low, high
   end
 
@@ -68,8 +69,12 @@ class RangeFinder
 
   def bump_to(target_range)
     pair = @ranges.range_pair(target_range)
-    return 0 if in_current_range?(pair)
+    return 0 if in_current_range?(pair) || beneath_low_range(pair)
     minimum_required(pair)
+  end
+
+  def beneath_low_range(pair)
+    @ranges[pair.low] < @commit_count
   end
 
   def in_current_range?(pair)
