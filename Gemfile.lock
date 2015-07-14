@@ -20,6 +20,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
+    ruby-git (0.2.2)
     simplecov (0.10.0)
       docile (~> 1.1.0)
       json (~> 1.8)
@@ -33,4 +34,5 @@ DEPENDENCIES
   faraday (~> 0.9)
   rspec (~> 3.3)
   rspec-mocks (~> 3.3)
+  ruby-git (~> 0.2)
   simplecov (~> 0.10)
