@@ -12,6 +12,10 @@ class Github
   def fetch_contributions
     @contributions ||= @contributions_fetcher.fetch
   end
+
+  def contributions
+    GithubContributions.new(github: self)
+  end
 end
 
 class ContributionsFetcher
@@ -62,7 +66,7 @@ class ContributionsParser
   end
 end
 
-class Contributions
+class GithubContributions
   include Enumerable
 
   def initialize(**options)
@@ -105,5 +109,15 @@ class Contributions
   def find_by_date(date)
     fail "Invalid date" unless is_valid_date?(date)
     @contributions[(date - first_commitable_date).to_i + days_to_skip]
+  end
+
+  def ==(other)
+    other.class == self.class && other.state == self.state
+  end
+
+  protected
+
+  def state
+    [@contributions]
   end
 end

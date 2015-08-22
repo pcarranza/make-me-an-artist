@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "Github" do
+describe Github do
   let (:contributions) do
     [Contribution.new(1, "2014-06-12"), Contribution.new(0, "2014-06-13")]
   end
@@ -21,12 +21,18 @@ describe "Github" do
     expect(fetched_contributions).to eq contributions
   end
 
+  it "returns uses the fetcher to get the contributions" do
+    github = Github.new(username: "pcarranza", fetcher: fetcher)
+    expect(github.contributions).to eq(GithubContributions.new(contributions: contributions))
+
+  end
+
   it "fails without a username or fetcher" do
     expect { Github.new }.to raise_error(KeyError)
   end
 end
 
-describe "ContributionsFetcher" do
+describe ContributionsFetcher do
   let(:connection) do
     connection, response = double(), double()
     allow(connection).to receive(:get).and_return(response)
@@ -43,11 +49,10 @@ describe "ContributionsFetcher" do
   end
 end
 
-describe "Contributions" do
-
+describe GithubContributions do
 
   it "picks the maximun contribution from all" do
-    contributions = Contributions.new(contributions: [
+    contributions = GithubContributions.new(contributions: [
                                       Contribution.new(0, "2014-06-11"),
                                       Contribution.new(7, "2014-06-12"),
                                       Contribution.new(0, "2014-06-13"),
@@ -56,21 +61,21 @@ describe "Contributions" do
   end
 
   it "calculates the baseline as 10 when the max contribution is 0" do
-    contributions = Contributions.new(contributions: [Contribution.new(0, "2014-06-11")])
+    contributions = GithubContributions.new(contributions: [Contribution.new(0, "2014-06-11")])
     expect(contributions.baseline_commits).to eq(10)
   end
   it "calculates the baseline as 10 when the max contribution is 1" do
-    contributions = Contributions.new(contributions: [Contribution.new(1, "2014-06-11")])
+    contributions = GithubContributions.new(contributions: [Contribution.new(1, "2014-06-11")])
     expect(contributions.baseline_commits).to eq(10)
   end
   it "calculates the baseline as 20 when the max contribution is 12" do
-    contributions = Contributions.new(contributions: [Contribution.new(12, "2014-06-11")])
+    contributions = GithubContributions.new(contributions: [Contribution.new(12, "2014-06-11")])
     expect(contributions.baseline_commits).to eq(20)
   end
 
   context "with some fixed contributions" do
     let(:contributions) do
-      Contributions.new(contributions: [
+      GithubContributions.new(contributions: [
                         Contribution.new(0, "2014-06-11"),
                         Contribution.new(7, "2014-06-12"),
                         Contribution.new(0, "2014-06-13"),
@@ -89,7 +94,7 @@ describe "Contributions" do
       expect(contributions.first_commitable_date).to eq(Date.parse("2014-06-15"))
     end
     it "finds the first full week with contributions starting in sunday" do
-      expect(Contributions.new(contributions: [Contribution.new(0, "2014-07-13")]).first_commitable_date).
+      expect(GithubContributions.new(contributions: [Contribution.new(0, "2014-07-13")]).first_commitable_date).
         to eq(Date.parse("2014-07-13"))
     end
     it "finds a given contribution by date" do

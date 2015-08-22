@@ -1,4 +1,4 @@
-class CommitRanges
+class CommitRangeCalculator
 
   RANGE_NAMES = [:zero, :low, :mid, :high, :max]
 
@@ -87,7 +87,7 @@ class RangeFinder
 end
 
 
-class CommitPlan
+class WantedContributionsGraph
   def initialize(commits)
     fail "Invalid commit list, expecting to find 7 lists" unless commits.length == 7
     @commit_days = commits
@@ -96,28 +96,41 @@ class CommitPlan
   def week(week_of_year)
     weekdays = []
     @commit_days.each do |weeks|
+      fail "Could not find week of year #{week_of_year}" unless weeks[week_of_year]
       weekdays << weeks[week_of_year] || 0
     end
     weekdays
   end
+
+  def weeks
+    @commit_days[0].length
+  end
 end
 
 
-class CommitPlanning
+class CommitsPerDateCalculator
   def initialize(**options)
-    @plan = options.fetch(:plan)
+    @commit_plan = options.fetch(:commit_plan)
     @contributions = options.fetch(:contributions)
-    @ranges = CommitRanges.new(contributions: @contributions)
+    @ranges = CommitRangeCalculator.new(contributions: @contributions)
   end
 
   def commits_for_date(date)
     fail "Invalid date" unless @contributions.is_valid_date?(date)
     return 0 if date < @contributions.first_commitable_date
-    target = @ranges.name_for(@plan.week(week_for_date(date))[date.wday])
+    target = @ranges.name_for(@commit_plan.week(week_for_date(date))[date.wday])
     @ranges.from(@contributions.find_by_date(date).count).bump_to(target)
   end
 
   def week_for_date(date)
     (date - @contributions.first_commitable_date).to_i / 7
+  end
+
+  def each_date(from_week: 0, during: @commit_plan.weeks - 1)
+    initial_date = @contributions.first_commitable_date + (from_week * 7)
+    final_date = initial_date + (during * 7)
+    (initial_date..final_date).each do |date|
+      yield date, commits_for_date(date)
+    end
   end
 end
