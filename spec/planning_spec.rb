@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "CommitRangeCalculator" do
+describe CommitRangeCalculator do
 
   let(:contributions) do
     GithubContributions.new(contributions: [
@@ -86,23 +86,29 @@ describe "CommitRangeCalculator" do
     expect(ranges.from(1).bump_to(:zero)).to eq(0)
   end
 
+  it "can be forced to have a specific range" do
+    ranges = CommitRangeCalculator.new(contributions: contributions,
+                                       commit_ranges: { zero: 0, low: 20, mid: 40, high: 60, max: 80 })
+    expect(ranges.to_h).to eq(0 => 0, 1 => 20, 2 => 40, 3 => 60, 4 => 80)
+  end
+
 end
 
-describe WantedContributionsGraph do
+describe DesiredContributionsGraph do
 
   it "Builds correctly" do
-    expect(WantedContributionsGraph.new(Factories.commit_plan)).not_to be_nil
+    expect(DesiredContributionsGraph.new(Factories.commit_plan)).not_to be_nil
   end
 
   it "Fails to build with an invalid commit plan" do
-    expect{WantedContributionsGraph.new([])}.to raise_error(/Invalid commit list/)
-    expect{WantedContributionsGraph.new((0..4).to_a)}.to raise_error(/Invalid commit list/)
-    expect{WantedContributionsGraph.new((0..5).to_a)}.to raise_error(/Invalid commit list/)
-    expect{WantedContributionsGraph.new((0..7).to_a)}.to raise_error(/Invalid commit list/)
+    expect{DesiredContributionsGraph.new([])}.to raise_error(/Invalid commit list/)
+    expect{DesiredContributionsGraph.new((0..4).to_a)}.to raise_error(/Invalid commit list/)
+    expect{DesiredContributionsGraph.new((0..5).to_a)}.to raise_error(/Invalid commit list/)
+    expect{DesiredContributionsGraph.new((0..7).to_a)}.to raise_error(/Invalid commit list/)
   end
 
   it "Picks the correct days given a week" do
-    commit_plan = WantedContributionsGraph.new(Factories.commit_plan)
+    commit_plan = DesiredContributionsGraph.new(Factories.commit_plan)
     expect(commit_plan.week(0)).to eq([1, 1, 1, 1, 1, 1, 1])
     expect(commit_plan.week(1)).to eq([1, 1, 1, 4, 1, 1, 3])
     expect(commit_plan.week(2)).to eq([1, 3, 4, 4, 4, 4, 3])
@@ -124,7 +130,7 @@ describe "CommitsPerDateCalculator" do
         53.times do |week_of_year| weeks << week_of_year % 5 end
         days << weeks
       end
-      WantedContributionsGraph.new(days)
+      DesiredContributionsGraph.new(days)
     end
 
     let(:fifty_three_weeks_contributions) do
@@ -221,7 +227,7 @@ describe "CommitsPerDateCalculator" do
     let(:one_week_plan) do
       plan = []
       7.times do |day_of_week| plan << [1] end
-      WantedContributionsGraph.new(plan)
+      DesiredContributionsGraph.new(plan)
     end
 
     let(:one_week_contributions) do

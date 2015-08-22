@@ -4,13 +4,14 @@ class CommitRangeCalculator
 
   def initialize(**options)
     baseline = options.fetch(:contributions).baseline_commits
-    @commit_ranges = RANGE_NAMES.each_with_index.map {|range_name, index|
-      [range_name, (baseline) * index]
-    }.to_h
+    @commit_ranges = options[:commit_ranges] || RANGE_NAMES.each_with_index.map {|range_name, index|
+        [range_name, (baseline) * index]
+      }.to_h
     @one_less_map = RANGE_NAMES.each_with_index.map {|range_name, index|
       [range_name, RANGE_NAMES[index - 1]]
     }.to_h
     @one_less_map[:zero] = :zero
+    # p "commit ranges are #{@commit_ranges} with a baseline of #{baseline}"
   end
 
   def [](range_name)
@@ -87,7 +88,7 @@ class RangeFinder
 end
 
 
-class WantedContributionsGraph
+class DesiredContributionsGraph
   def initialize(commits)
     fail "Invalid commit list, it was expected to find 7 lists, there are #{commits.length} instead" unless commits.length == 7
     @commit_days = commits
@@ -112,7 +113,9 @@ class CommitsPerDateCalculator
   def initialize(**options)
     @commit_plan = options.fetch(:commit_plan)
     @contributions = options.fetch(:contributions)
-    @ranges = CommitRangeCalculator.new(contributions: @contributions)
+    @ranges = CommitRangeCalculator.new(
+      contributions: @contributions,
+      commit_ranges: options[:commit_ranges])
   end
 
   def commits_for_date(date)

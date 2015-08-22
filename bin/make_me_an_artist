@@ -3,30 +3,13 @@
 require_relative '../lib/artist'
 
 def self.main()
-  desired_graph = merge(merge(merge(pingui, invader), merge(galaga, pingui)), merge(invader, galaga))
+  design = Design.new(skip_weeks: 1).add(pingui).add(invader).add(galaga).add(pingui).add(invader).add(galaga).create
   Artist::make_me_an_artist(username: "pcarranza", 
-                            desired_graph: desired_graph,
-                            workdir: "/tmp").now
-end
-
-def self.merge(left, right)
-  days = []
-  7.times do |i|
-    days << left[i] + right[i]
-  end
-  days
-end
-
-def self.commit_plan
-  [
-    [1,1,1,3,3,3,3,3,1,1,0,1,1,3,1,3,3,1,3,1,1,0,1,4,1,1,1,1,4,1,0,1,1,1,3,3,3,3,3,1,1],
-    [1,1,3,1,1,1,1,1,3,1,0,1,1,1,4,3,3,4,1,1,1,0,1,1,3,1,1,3,1,1,0,1,1,3,1,1,1,1,1,3,1],
-    [1,1,4,1,4,1,4,1,4,1,0,1,3,3,3,3,3,3,3,3,1,0,1,4,4,4,4,4,4,1,0,1,1,4,1,4,1,4,1,4,1],
-    [1,4,4,2,3,3,3,2,4,4,0,1,3,1,3,3,3,3,1,3,1,0,4,4,4,4,4,4,4,4,0,1,4,4,2,3,3,3,2,4,4],
-    [1,1,4,4,2,3,2,4,4,1,0,1,2,1,3,1,1,3,1,2,1,0,4,1,4,4,4,4,1,4,0,1,1,4,4,2,3,2,4,4,1],
-    [1,1,4,2,2,2,2,2,4,1,0,1,1,1,3,1,1,3,1,1,1,0,4,1,4,1,1,4,1,4,0,1,1,4,2,2,2,2,2,4,1],
-    [1,3,3,1,1,1,1,1,3,3,0,1,1,2,3,1,1,3,2,1,1,0,1,1,1,3,3,1,1,1,0,1,3,3,1,1,1,1,1,3,3]
-  ]
+                            design: design,
+                            workdir: "/tmp",
+                            # start_date: Date.parse("2015-08-22"),
+                            # commit_ranges: { zero: 0, low: 20, mid: 40, high: 60, max: 80 }
+                           ).now
 end
 
 def self.pingui
