@@ -187,7 +187,7 @@ describe "CommitsPerDateCalculator" do
 
     it "provides the right amount of required commits" do
       planning = CommitsPerDateCalculator.new(commit_plan: fifty_three_weeks_plan, contributions: fifty_three_weeks_contributions)
-      dates = (Date.parse("2014-07-13")..Date.parse("2015-07-12")).to_a
+      dates = (Date.parse("2014-07-13")..Date.parse("2015-07-18")).to_a
       expected_commits = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 7, 6, 5, 4,
         3, 2, 11, 20, 19, 18, 17, 16, 15, 14, 23, 22, 31, 30, 29, 28, 27, 0, 0,
         0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 11, 10, 9, 8, 7, 6, 15, 14, 13,
@@ -205,7 +205,8 @@ describe "CommitsPerDateCalculator" do
         0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 7, 6, 5, 4, 3, 2, 11, 20, 19, 18, 17,
         16, 15, 14, 23, 22, 31, 30, 29, 28, 27, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
         0, 0, 0, 0, 2, 11, 10, 9, 8, 7, 6, 15, 14, 13, 12, 21, 20, 19, 28, 27,
-        26, 25, 24, 23, 22, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 7]
+        26, 25, 24, 23, 22, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 7, 6, 5,
+        4, 3, 2, 11]
       planning.each_date do |date, required_commits|
         expect(date).to eq(dates.shift)
         expect(required_commits).to eq(expected_commits.shift)

@@ -89,14 +89,14 @@ end
 
 class WantedContributionsGraph
   def initialize(commits)
-    fail "Invalid commit list, expecting to find 7 lists" unless commits.length == 7
+    fail "Invalid commit list, it was expected to find 7 lists, there are #{commits.length} instead" unless commits.length == 7
     @commit_days = commits
   end
 
   def week(week_of_year)
     weekdays = []
     @commit_days.each do |weeks|
-      fail "Could not find week of year #{week_of_year}" unless weeks[week_of_year]
+      fail "Could not find week #{week_of_year} in the desired contributions" unless weeks[week_of_year]
       weekdays << weeks[week_of_year] || 0
     end
     weekdays
@@ -116,7 +116,7 @@ class CommitsPerDateCalculator
   end
 
   def commits_for_date(date)
-    fail "Invalid date" unless @contributions.is_valid_date?(date)
+    fail "Date #{date} is invalid, it does not exists in the contributions" unless @contributions.is_valid_date?(date)
     return 0 if date < @contributions.first_commitable_date
     target = @ranges.name_for(@commit_plan.week(week_for_date(date))[date.wday])
     @ranges.from(@contributions.find_by_date(date).count).bump_to(target)
@@ -126,9 +126,9 @@ class CommitsPerDateCalculator
     (date - @contributions.first_commitable_date).to_i / 7
   end
 
-  def each_date(from_week: 0, during: @commit_plan.weeks - 1)
+  def each_date(from_week: 0, during: @commit_plan.weeks)
     initial_date = @contributions.first_commitable_date + (from_week * 7)
-    final_date = initial_date + (during * 7)
+    final_date = initial_date + (during * 7) - 1
     (initial_date..final_date).each do |date|
       yield date, commits_for_date(date)
     end
