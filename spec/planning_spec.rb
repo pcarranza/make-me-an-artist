@@ -14,19 +14,19 @@ describe CommitRangeCalculator do
   it "calculates the basic case correctly" do
     ranges = CommitRangeCalculator.new(contributions: contributions)
     expect([ranges[:zero], ranges[:low], ranges[:mid], ranges[:high], ranges[:max]]).to eq(
-      [0, 10, 20, 30, 40])
+      [0, 20, 40, 60, 80])
   end
 
   it "calculates the commit ranges fine with a larger ranges starting on the next tens" do
     ranges = CommitRangeCalculator.new(contributions: GithubContributions.new(
       contributions: [Contribution.new(23, "2014-06-01")]))
-    expect(ranges.to_h).to eq(0 => 0, 1 => 30, 2 => 60, 3 => 90, 4 => 120)
+    expect(ranges.to_h).to eq(0 => 0, 1 => 50, 2 => 100, 3 => 150, 4 => 200)
   end
 
   it "calculates the commit ranges fine with a larger ranges also on the tens" do
     ranges = CommitRangeCalculator.new(contributions: GithubContributions.new(
       contributions: [Contribution.new(30, "2014-06-01")]))
-    expect(ranges.to_h).to eq(0 => 0, 1 => 40, 2 => 80, 3 => 120, 4 => 160)
+      expect(ranges.to_h).to eq(0 => 0, 1 => 60, 2 => 120, 3 => 180, 4 => 240)
   end
 
   it "can translate numbers to range names" do
@@ -53,17 +53,17 @@ describe CommitRangeCalculator do
 
   it "finds that 11 commits are needed to bump to mid from 0" do
     ranges = CommitRangeCalculator.new(contributions: contributions)
-    expect(ranges.from(0).bump_to(:mid)).to eq(11)
+    expect(ranges.from(0).bump_to(:mid)).to eq(21)
   end
 
   it "finds that 21 commits are needed to bump to high from 0" do
     ranges = CommitRangeCalculator.new(contributions: contributions)
-    expect(ranges.from(0).bump_to(:high)).to eq(21)
+    expect(ranges.from(0).bump_to(:high)).to eq(41)
   end
 
   it "finds that 31 commits are needed to bump to max from 0" do
     ranges = CommitRangeCalculator.new(contributions: contributions)
-    expect(ranges.from(0).bump_to(:max)).to eq(31)
+    expect(ranges.from(0).bump_to(:max)).to eq(61)
   end
 
   it "finds that no commit is needed to bump to low from 1" do
@@ -73,12 +73,12 @@ describe CommitRangeCalculator do
 
   it "finds that 10 commits are needed to bump to mid from 1" do
     ranges = CommitRangeCalculator.new(contributions: contributions)
-    expect(ranges.from(1).bump_to(:mid)).to eq(10)
+    expect(ranges.from(1).bump_to(:mid)).to eq(20)
   end
 
   it "finds that no commits are needed to bump to max from max" do
     ranges = CommitRangeCalculator.new(contributions: contributions)
-    expect(ranges.from(31).bump_to(:max)).to eq(0)
+    expect(ranges.from(81).bump_to(:max)).to eq(0)
   end
 
   it "finds that bumping from 1 to zero results in 0 commits" do
@@ -181,38 +181,36 @@ describe "CommitsPerDateCalculator" do
       expect(planning.commits_for_date(Date.parse("2014-07-22"))).to eq(0)
       expect(planning.commits_for_date(Date.parse("2014-07-23"))).to eq(1)
       expect(planning.commits_for_date(Date.parse("2014-07-24"))).to eq(0)
-      expect(planning.commits_for_date(Date.parse("2014-07-27"))).to eq(7)
-      expect(planning.commits_for_date(Date.parse("2014-07-28"))).to eq(6)
-      expect(planning.commits_for_date(Date.parse("2014-07-29"))).to eq(5)
-      expect(planning.commits_for_date(Date.parse("2014-07-30"))).to eq(4)
-      expect(planning.commits_for_date(Date.parse("2014-08-03"))).to eq(20)
-      expect(planning.commits_for_date(Date.parse("2014-08-04"))).to eq(19)
-      expect(planning.commits_for_date(Date.parse("2014-08-05"))).to eq(18)
-      expect(planning.commits_for_date(Date.parse("2014-08-10"))).to eq(23)
+      expect(planning.commits_for_date(Date.parse("2014-07-27"))).to eq(17)
+      expect(planning.commits_for_date(Date.parse("2014-07-28"))).to eq(16)
+      expect(planning.commits_for_date(Date.parse("2014-07-29"))).to eq(15)
+      expect(planning.commits_for_date(Date.parse("2014-07-30"))).to eq(14)
+      expect(planning.commits_for_date(Date.parse("2014-08-03"))).to eq(40)
+      expect(planning.commits_for_date(Date.parse("2014-08-04"))).to eq(39)
+      expect(planning.commits_for_date(Date.parse("2014-08-05"))).to eq(38)
+      expect(planning.commits_for_date(Date.parse("2014-08-10"))).to eq(53)
     end
 
     it "provides the right amount of required commits" do
       planning = CommitsPerDateCalculator.new(commit_plan: fifty_three_weeks_plan, contributions: fifty_three_weeks_contributions)
       dates = (Date.parse("2014-07-13")..Date.parse("2015-07-18")).to_a
-      expected_commits = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 7, 6, 5, 4,
-        3, 2, 11, 20, 19, 18, 17, 16, 15, 14, 23, 22, 31, 30, 29, 28, 27, 0, 0,
-        0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 11, 10, 9, 8, 7, 6, 15, 14, 13,
-        12, 21, 20, 19, 28, 27, 26, 25, 24, 23, 22, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 1, 0, 0, 0, 7, 6, 5, 4, 3, 2, 11, 20, 19, 18, 17, 16, 15, 14, 23,
-        22, 31, 30, 29, 28, 27, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2,
-        11, 10, 9, 8, 7, 6, 15, 14, 13, 12, 21, 20, 19, 28, 27, 26, 25, 24, 23,
-        22, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 7, 6, 5, 4, 3, 2, 11, 20,
-        19, 18, 17, 16, 15, 14, 23, 22, 31, 30, 29, 28, 27, 0, 0, 0, 0, 0, 1,
-        0, 0, 0, 0, 0, 0, 0, 0, 2, 11, 10, 9, 8, 7, 6, 15, 14, 13, 12, 21, 20,
-        19, 28, 27, 26, 25, 24, 23, 22, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
-        0, 7, 6, 5, 4, 3, 2, 11, 20, 19, 18, 17, 16, 15, 14, 23, 22, 31, 30,
-        29, 28, 27, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 11, 10, 9, 8,
-        7, 6, 15, 14, 13, 12, 21, 20, 19, 28, 27, 26, 25, 24, 23, 22, 1, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 7, 6, 5, 4, 3, 2, 11, 20, 19, 18, 17,
-        16, 15, 14, 23, 22, 31, 30, 29, 28, 27, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
-        0, 0, 0, 0, 2, 11, 10, 9, 8, 7, 6, 15, 14, 13, 12, 21, 20, 19, 28, 27,
-        26, 25, 24, 23, 22, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 7, 6, 5,
-        4, 3, 2, 11]
+      expected_commits = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 17, 16, 15, 14, 13,
+        12, 21, 40, 39, 38, 37, 36, 35, 34, 53, 52, 61, 60, 59, 58, 57, 0, 0, 0, 0, 0, 1,
+        0, 0, 0, 0, 0, 0, 0, 0, 12, 21, 20, 19, 18, 17, 16, 35, 34, 33, 32, 41, 40, 39,
+        58, 57, 56, 55, 54, 53, 52, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 17, 16, 15,
+        14, 13, 12, 21, 40, 39, 38, 37, 36, 35, 34, 53, 52, 61, 60, 59, 58, 57, 0, 0, 0,
+        0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 12, 21, 20, 19, 18, 17, 16, 35, 34, 33, 32, 41,
+        40, 39, 58, 57, 56, 55, 54, 53, 52, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 17,
+        16, 15, 14, 13, 12, 21, 40, 39, 38, 37, 36, 35, 34, 53, 52, 61, 60, 59, 58, 57, 0,
+        0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 12, 21, 20, 19, 18, 17, 16, 35, 34, 33, 32,
+        41, 40, 39, 58, 57, 56, 55, 54, 53, 52, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+        17, 16, 15, 14, 13, 12, 21, 40, 39, 38, 37, 36, 35, 34, 53, 52, 61, 60, 59, 58,
+        57, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 12, 21, 20, 19, 18, 17, 16, 35, 34,
+        33, 32, 41, 40, 39, 58, 57, 56, 55, 54, 53, 52, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        0, 0, 0, 17, 16, 15, 14, 13, 12, 21, 40, 39, 38, 37, 36, 35, 34, 53, 52, 61, 60,
+        59, 58, 57, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 12, 21, 20, 19, 18, 17, 16,
+        35, 34, 33, 32, 41, 40, 39, 58, 57, 56, 55, 54, 53, 52, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 1, 0, 0, 0, 17, 16, 15, 14, 13, 12, 21]
       planning.each_date do |date, required_commits|
         expect(date).to eq(dates.shift)
         expect(required_commits).to eq(expected_commits.shift)

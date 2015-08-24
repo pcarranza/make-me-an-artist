@@ -86,7 +86,7 @@ class GithubContributions
   end
 
   def baseline_commits
-    baseline = max.count + 1
+    baseline = max.count * 2
     baseline = 10 * (baseline.to_f / (10 ** (Math.log10(baseline).ceil - 1))).ceil if baseline > 10
     baseline = 10 if baseline < 10
     baseline
@@ -107,7 +107,7 @@ class GithubContributions
   end
 
   def find_by_date(date)
-    fail "Invalid date" unless is_valid_date?(date)
+    return Contribution.new(0, date) unless is_valid_date?(date)
     @contributions[(date - first_commitable_date).to_i + days_to_skip]
   end
 

@@ -68,9 +68,9 @@ describe GithubContributions do
     contributions = GithubContributions.new(contributions: [Contribution.new(1, "2014-06-11")])
     expect(contributions.baseline_commits).to eq(10)
   end
-  it "calculates the baseline as 20 when the max contribution is 12" do
+  it "calculates the baseline as 30 when the max contribution is 12" do
     contributions = GithubContributions.new(contributions: [Contribution.new(12, "2014-06-11")])
-    expect(contributions.baseline_commits).to eq(20)
+    expect(contributions.baseline_commits).to eq(30)
   end
 
   context "with some fixed contributions" do

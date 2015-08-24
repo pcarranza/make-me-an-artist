@@ -119,7 +119,6 @@ class CommitsPerDateCalculator
   end
 
   def commits_for_date(date)
-    fail "Date #{date} is invalid, it does not exists in the contributions" unless @contributions.is_valid_date?(date)
     return 0 if date < @contributions.first_commitable_date
     target = @ranges.name_for(@commit_plan.week(week_for_date(date))[date.wday])
     @ranges.from(@contributions.find_by_date(date).count).bump_to(target)

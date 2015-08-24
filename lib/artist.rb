@@ -17,7 +17,7 @@ class Artist
     Artist.new(**args)
   end
 
-  def now
+  def just_do_it!
     @repo.create
     calculator = CommitsPerDateCalculator.new(
       commit_plan: DesiredContributionsGraph.new(@design),

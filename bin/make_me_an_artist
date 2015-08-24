@@ -3,13 +3,19 @@
 require_relative '../lib/artist'
 
 def self.main()
-  design = Design.new(skip_weeks: 1).add(pingui).add(invader).add(galaga).add(pingui).add(invader).add(galaga).create
+  design = Design.new.
+    add(pingui).
+    add(invader).
+    add(galaga).
+    add(pacman).
+    add(ghost).
+    add(pingui).create
   Artist::make_me_an_artist(username: "pcarranza", 
                             design: design,
-                            workdir: "/tmp",
+                            workdir: "/home/pcarranza/github-contributions/",
                             # start_date: Date.parse("2015-08-22"),
                             # commit_ranges: { zero: 0, low: 20, mid: 40, high: 60, max: 80 }
-                           ).now
+                           ).just_do_it!
 end
 
 def self.pingui
@@ -45,6 +51,42 @@ def self.galaga
     [1,4,1,4,4,4,4,1,4],
     [1,4,1,4,1,1,4,1,4],
     [1,1,1,1,3,3,1,1,1],
+  ]
+end
+
+def self.ghost
+  [
+    [1,1,2,3,3,3,2,1],
+    [1,2,1,1,3,1,1,2],
+    [1,3,1,4,3,1,4,3],
+    [1,3,1,1,3,1,1,3],
+    [1,3,3,3,3,3,3,3],
+    [1,3,3,2,3,3,2,3],
+    [1,3,1,1,3,1,1,3],
+  ]
+end
+
+def self.pacman
+  [
+    [1,1,1,3,4,3,2,1],
+    [1,1,3,4,4,4,3,2],
+    [1,3,4,4,4,3,1,1],
+    [1,3,4,4,1,1,1,1],
+    [1,3,4,4,4,3,1,1],
+    [1,1,3,4,4,4,3,2],
+    [1,1,1,3,4,3,2,1],
+  ]
+end
+
+def self.shurikens
+  [
+    [1,1,1,3,1,1,1,1,1,1,1,1,1],
+    [1,1,1,4,3,1,1,1,1,3,1,1,1],
+    [1,1,3,4,4,4,4,1,1,4,3,1,1],
+    [1,3,4,4,4,3,1,1,3,4,4,4,4],
+    [1,1,1,3,4,1,1,4,4,4,4,3,1],
+    [1,1,1,1,3,1,1,1,1,3,4,1,1],
+    [1,1,1,1,1,1,1,1,1,1,3,1,1],
   ]
 end
 
