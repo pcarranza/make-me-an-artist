@@ -103,5 +103,13 @@ describe GithubContributions do
       expect(contributions.find_by_date(Date.parse("2014-06-19"))).to eq(
         Contribution.new(3, "2014-06-19"))
     end
+
+    it "can be enumerated" do
+      count = 0
+      contributions.each do |contribution|
+        count += 1
+      end
+      expect(count).to eq(12)
+    end
   end
 end
