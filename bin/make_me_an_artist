@@ -10,7 +10,7 @@ def self.main()
     add(pacman).
     add(ghost).
     add(pingui).create
-  Muse.new(username: "pcarranza", 
+  Muse.new(username: "#{ENV['USER']}", 
            design: design,
            workdir: "/tmp",
            # start_date: Date.parse("2015-08-22"),
