@@ -7,6 +7,6 @@ SimpleCov.start
 require "github"
 require "planning"
 require "repo"
-require "artist"
+require "muse"
 
 require_relative "./factories"

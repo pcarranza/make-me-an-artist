@@ -2,7 +2,7 @@ require_relative "github"
 require_relative "planning"
 require_relative "repo"
 
-class Artist
+class Muse
 
   def initialize(username:, design:, repo_name: "noise", workdir: ".", **args)
     @username = username
@@ -13,11 +13,7 @@ class Artist
     @commit_ranges = args[:commit_ranges]
   end
 
-  def self.make_me_an_artist(**args)
-    Artist.new(**args)
-  end
-
-  def just_do_it!
+  def make_me_an_artist
     @repo.create
     calculator = CommitsPerDateCalculator.new(
       commit_plan: DesiredContributionsGraph.new(@design),

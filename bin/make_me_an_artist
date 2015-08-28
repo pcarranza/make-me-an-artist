@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require_relative '../lib/artist'
+require_relative '../lib/muse'
 
 def self.main()
   design = Design.new.
@@ -10,12 +10,12 @@ def self.main()
     add(pacman).
     add(ghost).
     add(pingui).create
-  Artist::make_me_an_artist(username: "pcarranza", 
-                            design: design,
-                            workdir: "/home/pcarranza/github-contributions/",
-                            # start_date: Date.parse("2015-08-22"),
-                            # commit_ranges: { zero: 0, low: 20, mid: 40, high: 60, max: 80 }
-                           ).just_do_it!
+  Muse.new(username: "pcarranza", 
+           design: design,
+           workdir: "/tmp",
+           # start_date: Date.parse("2015-08-22"),
+           # commit_ranges: { zero: 0, low: 20, mid: 40, high: 60, max: 80 }
+          ).make_me_an_artist
 end
 
 def self.pingui
