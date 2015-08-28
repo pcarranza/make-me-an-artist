@@ -10,12 +10,17 @@ def self.main()
     add(pacman).
     add(ghost).
     add(pingui).create
-  Muse.new(username: "#{ENV['USER']}", 
-           design: design,
-           workdir: "/tmp",
-           # start_date: Date.parse("2015-08-22"),
+  muse = Muse.new(username: "#{ENV['USER']}", design: design, workdir: "/tmp",
+           # start_date: Date.parse("2015-08-22"), 
            # commit_ranges: { zero: 0, low: 20, mid: 40, high: 60, max: 80 }
-          ).make_me_an_artist
+          )
+
+  repo = Repo.new(workdir: "/tmp").create
+  muse.make_me_an_artist do |date, amount|
+    amount.times do
+      @repo.run(Commit.new(date: date))
+    end
+  end
 end
 
 def self.pingui

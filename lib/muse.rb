@@ -8,22 +8,18 @@ class Muse
     @username = username
     @design = design
     @github = args.fetch(:github) { Github.new(username: username) }
-    @repo = args.fetch(:repo) { Repo.new(name: repo_name, workdir: workdir) }
     @start_date = args[:start_date]
     @commit_ranges = args[:commit_ranges]
   end
 
   def make_me_an_artist
-    @repo.create
     calculator = CommitsPerDateCalculator.new(
       commit_plan: DesiredContributionsGraph.new(@design),
       contributions: @github.contributions,
       commit_ranges: @commit_ranges)
     calculator.each_date do |date, required_commits|
       next if @start_date and date < @start_date
-      required_commits.times do
-        @repo.run(Commit.new(date: date))
-      end
+      yield date, required_commits
     end
   end
 
@@ -54,3 +50,4 @@ class Design
   end
 
 end
+
