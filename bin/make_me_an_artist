@@ -1,25 +1,27 @@
 #!/usr/bin/env ruby
 
 require_relative '../lib/muse'
+require_relative "../lib/repo"
 
 def self.main()
-  design = Design.new.
+  design = Design.new(skip_weeks: 1).
     add(pingui).
     add(invader).
     add(galaga).
     add(pacman).
     add(ghost).
     add(pingui).create
-  muse = Muse.new(username: "#{ENV['USER']}", design: design, workdir: "/tmp",
+  muse = Muse.new(username: "#{ENV['USER']}", design: design, workdir: "/home/pcarranza/github-contributions/noise",
            # start_date: Date.parse("2015-08-22"), 
-           # commit_ranges: { zero: 0, low: 20, mid: 40, high: 60, max: 80 }
+           commit_ranges: { zero: 0, low: 20, mid: 40, high: 60, max: 80 }
           )
 
-  repo = Repo.new(workdir: "/tmp").create
+  repo = Repo.new(name: "noise", workdir: "/tmp").create
   muse.make_me_an_artist do |date, amount|
-    amount.times do
-      @repo.run(Commit.new(date: date))
-    end
+    p "On #{date.to_s} we have to commit #{amount} times"
+    # amount.times do
+    #    @repo.run(Commit.new(date: date))
+    # end
   end
 end
 

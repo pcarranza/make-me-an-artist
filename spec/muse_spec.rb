@@ -24,3 +24,19 @@ describe Design do
     expect(design).to eq([[], [], [], [], [], [], []])
   end
 end
+
+# describe Strategy do
+#   let(:simple_design) do
+#     [[1], [1], [1], [1], [1], [1], [1]]
+#   end
+#   let(:commit_ranges) do
+#     { zero: 0, low: 20, mid: 40, high: 60, max: 80 }
+#   end
+#   let(:contributions) do
+#     GithubContributions.new(contributions: (1..10).inject([]) { |list, value|
+#       list << Contribution.new(0, Date.parse("2014-06-11") + value) })
+#   end
+#   it "Commits given the right calculator of commits" do
+#     strategy = Strategy.new(design: simple_design, contributions: contributions, commit_ranges: commit_ranges)
+#   end
+# end

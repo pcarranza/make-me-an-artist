@@ -1,6 +1,5 @@
 require_relative "github"
 require_relative "planning"
-require_relative "repo"
 
 class Muse
 
