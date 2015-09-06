@@ -1,100 +1,121 @@
 #!/usr/bin/env ruby
 
+require "main"
+
 require_relative '../lib/muse'
 require_relative "../lib/repo"
+require_relative "../lib/designs"
 
-def self.main()
-  design = Design.new(skip_weeks: 1).
-    add(pingui).
-    add(invader).
-    add(galaga).
-    add(pacman).
-    add(ghost).
-    add(pingui).create
-  muse = Muse.new(username: "#{ENV['USER']}", design: design, workdir: "/home/pcarranza/github-contributions/noise",
-           # start_date: Date.parse("2015-08-22"), 
-           commit_ranges: { zero: 0, low: 20, mid: 40, high: 60, max: 80 }
-          )
+Main {
 
-  repo = Repo.new(name: "noise", workdir: "/tmp").create
-  muse.make_me_an_artist do |date, amount|
-    p "On #{date.to_s} we have to commit #{amount} times"
-    # amount.times do
-    #    @repo.run(Commit.new(date: date))
+  def run
+      verbose if params["verbose"].value
+      muse = Muse.new(username: params["username"].value,
+                      workdir: params["workdir"].value,
+                      design: Design.from_list(params["designs"].value,
+                                               skip_weeks: params["skip-weeks"].value,
+                                               weeks_offset: params["weeks-offset"].value),
+                      start_date: params["start-date"].value,
+                      commit_ranges: params["ranges"].value)
+      repo = Repo.new(name: params["repo-name"].value,
+                      workdir: params["workdir"].value)
+      worker = (params["dryrun"].value ? DryCommiter.new(repo) : RepoCommiter.new(repo))
+      muse.make_me_an_artist { |date, amount|
+        worker.work(date, amount)
+      }
+      puts "Total commits #{worker.count}"
+    # rescue => e
+    #   p e.message
     # end
   end
-end
 
-def self.pingui
-  [
-    [1,1,1,3,3,3,3,3,1,1],
-    [1,1,3,1,1,1,1,1,3,1],
-    [1,1,4,1,4,1,4,1,4,1],
-    [1,4,4,2,3,3,3,2,4,4],
-    [1,1,4,4,2,3,2,4,4,1],
-    [1,1,4,2,2,2,2,2,4,1],
-    [1,3,3,1,1,1,1,1,3,3],
-  ]
-end
+  def verbose
+    puts "skip weeks: #{params['skip-weeks'].value}"
+    puts "weeks-offset: #{params['weeks-offset'].value}"
+    puts "username: #{params['username'].value}"
+    puts "repo name: #{params['repo-name'].value}"
+    puts "workdir: #{params['workdir'].value}"
+    puts "dryrun: #{params['dryrun'].value}"
+    puts "start-date: #{params['start-date'].value.nil? ? 'None' : params['start-date'].value}"
+    puts "commit_ranges: #{params['ranges'].value.nil? ? 'None' : params['ranges'].value}"
+    puts "designs is nil: #{params['designs'].value.nil? ? 'None' : params['designs'].value}"
+  end
 
-def self.invader
-  [
-    [1,1,3,1,3,3,1,3,1],
-    [1,1,1,4,3,3,4,1,1],
-    [1,3,3,3,3,3,3,3,3],
-    [1,3,1,3,3,3,3,1,3],
-    [1,2,1,3,1,1,3,1,2],
-    [1,1,1,3,1,1,3,1,1],
-    [1,1,2,3,1,1,3,2,1],
-  ]
-end
+  option("username") {
+    argument_required
+    default ENV['USER']
+    description "Github username"
+  }
 
-def self.galaga
-  [
-    [1,1,4,1,1,1,1,4,1],
-    [1,1,1,3,1,1,3,1,1],
-    [1,1,4,4,4,4,4,4,1],
-    [1,4,4,4,4,4,4,4,4],
-    [1,4,1,4,4,4,4,1,4],
-    [1,4,1,4,1,1,4,1,4],
-    [1,1,1,1,3,3,1,1,1],
-  ]
-end
+  option("workdir") {
+    argument_required
+    default "/tmp"
+    description "The working directory to use for creating the repository"
+  }
 
-def self.ghost
-  [
-    [1,1,2,3,3,3,2,1],
-    [1,2,1,1,3,1,1,2],
-    [1,3,1,4,3,1,4,3],
-    [1,3,1,1,3,1,1,3],
-    [1,3,3,3,3,3,3,3],
-    [1,3,3,2,3,3,2,3],
-    [1,3,1,1,3,1,1,3],
-  ]
-end
+  option("skip-weeks") {
+    argument_required
+    cast :int
+    default 0
+    description "How many weeks of offset to the left should the design have, useful to refresh after a week has passed"
+  }
 
-def self.pacman
-  [
-    [1,1,1,3,4,3,2,1],
-    [1,1,3,4,4,4,3,2],
-    [1,3,4,4,4,3,1,1],
-    [1,3,4,4,1,1,1,1],
-    [1,3,4,4,4,3,1,1],
-    [1,1,3,4,4,4,3,2],
-    [1,1,1,3,4,3,2,1],
-  ]
-end
+  option("weeks-offset") {
+    argument_required
+    cast :int
+    default 0
+    description "How many weeks of offset to the right should the design have, useful to refresh after a week has passed"
+  }
 
-def self.shurikens
-  [
-    [1,1,1,3,1,1,1,1,1,1,1,1,1],
-    [1,1,1,4,3,1,1,1,1,3,1,1,1],
-    [1,1,3,4,4,4,4,1,1,4,3,1,1],
-    [1,3,4,4,4,3,1,1,3,4,4,4,4],
-    [1,1,1,3,4,1,1,4,4,4,4,3,1],
-    [1,1,1,1,3,1,1,1,1,3,4,1,1],
-    [1,1,1,1,1,1,1,1,1,1,3,1,1],
-  ]
-end
+  option("ranges") {
+    argument_required
+    cast lambda { |arg|
+      Hash[[:zero, :low, :mid, :high, :max].zip(arg.split(',').inject([]) { |ranges_list, range_value|
+        ranges_list << range_value.to_i
+      })]
+    }
+    validate lambda { |arg| arg.keys.length == 5 }
+    description <<ENDHELP
+Particularly useful for repainting. With this argument the commit ranges can be declared so there is no need to calculate them.
+This calculation is usually done when the noise repository is created, and is basically a dictionary with the following values:
 
-main()
+{ zero: 0, low: 20, mid: 40, high: 60, max: 80 }
+
+This argument is expressed as a 5 positions list, which in this case is the following: 0,20,40,60,80
+
+The simplest way of getting these values is by running the tool the first time with --verbose
+ENDHELP
+  }
+
+  option("start-date") {
+    argument_required
+    required false
+    cast lambda { |arg| Date.parse(arg) }
+  }
+
+  option("repo-name") {
+    argument_required
+    cast :string
+    default "noise"
+    description "The repository name to use in the workdir"
+  }
+
+  option("verbose") {
+    required false
+    default false
+    description "Provides way too much information"
+  }
+
+  option("designs") {
+    required true
+    argument_required
+    description "Which designs to draw in the canvas, available designs are: #{Designs.methods(false).join(', ')}"
+    cast lambda { |arg| arg.split(",") }
+  }
+
+  option("dryrun") {
+    required false
+    default false
+    description "Do not change anything, just pull data and figure out what should be done"
+  }
+}

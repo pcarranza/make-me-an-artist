@@ -107,8 +107,7 @@ class GithubContributions
   end
 
   def find_by_date(date)
-    return Contribution.new(0, date) unless is_valid_date?(date)
-    @contributions[(date - first_commitable_date).to_i + days_to_skip]
+    @contributions[(date - first_commitable_date).to_i + days_to_skip] or Contribution.new(0, date)
   end
 
   def ==(other)

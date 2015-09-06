@@ -24,29 +24,28 @@ class Muse
 
 end
 
-class Design
-
-  def initialize(skip_weeks: 0)
-    @design = 7.times.inject([]) do |week|
-      week << []
-    end
-    @skip_weeks = skip_weeks
+class RepoCommiter
+  attr_reader :count
+  def initialize(repo)
+    @repo = repo
+    @count = 0
   end
-
-  def add(design)
-    7.times do |day|
-      @design[day] += design[day]
+  def work(date, how_many)
+    @repo.create
+    how_many.times do
+      @repo.run(Commit.new(date: date))
+      @count += 1
     end
-    self
   end
-
-  def create
-    design = @design.clone
-    @skip_weeks.times do
-      7.times do |day| design[day].shift end
-    end
-    design
-  end
-
 end
 
+class DryCommiter
+  attr_reader :count
+  def initialize(repo)
+    @count = 0
+  end
+  def work(date, how_many)
+    p "On #{date.to_s} we have to commit #{how_many} times"
+    @count += how_many
+  end
+end

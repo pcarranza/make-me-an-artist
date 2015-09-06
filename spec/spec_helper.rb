@@ -8,5 +8,6 @@ require "github"
 require "planning"
 require "repo"
 require "muse"
+require "designs"
 
 require_relative "./factories"
