@@ -37,6 +37,6 @@ So, one thing lead to another... I have my own vandalism\^H\^H\^H\^H\^H\^H\^H\^H
 * For inspiration [hintjens](https://github.com/hintjens)
 
 * Similar tools and inspirations:
-** [ghdecoy](https://github.com/tickelton/ghdecoy)
-** [github-board](https://github.com/bayandin/github-board)
-** [gitfiti](https://github.com/gelstudios/gitfiti) <= Here you can pick more designs
+    * [ghdecoy](https://github.com/tickelton/ghdecoy)
+    * [github-board](https://github.com/bayandin/github-board)
+    * [gitfiti](https://github.com/gelstudios/gitfiti) <= Here you can pick more designs
