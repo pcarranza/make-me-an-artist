@@ -3,7 +3,9 @@ before_script:
   - which ruby
   - gem install bundler --no-ri --no-rdoc
   - bundle install --jobs $(nproc)  "${FLAGS[@]}"
+  - git config user.email "you@example.com"
+  - git config user.name "Your Name"
 
 rspec:
   script:
-    - bundle exec rspec
+    - bundle exec rspec -f d -c
