@@ -7,7 +7,7 @@ This is a way of vandalising my github contributions stream with some 7 bits pix
 
 This is the product of trying to use [ghdecoy](https://github.com/tickelton/ghdecoy), and then realizing that if you do have some actual activity it was just not covering that.
 
-So, one thing lead to another... I have my own vandalism\^H\^H\^\H\^\H\^\H\^\H\^\H\^\H\^H production tool.
+So, one thing lead to another... I have my own vandalism\^H\^H\^H\^H\^H\^H\^H\^H\^H production tool.
 
 
 ##How to use
