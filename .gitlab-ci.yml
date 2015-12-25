@@ -8,4 +8,4 @@ before_script:
 
 rspec:
   script:
-    - bundle exec rspec -f d -c
+    - bundle exec rspec -f d
