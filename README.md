@@ -10,7 +10,7 @@ This is the product of trying to use [ghdecoy](https://github.com/tickelton/ghde
 So, one thing lead to another... I have my own vandalism\^H\^H\^H\^H\^H\^H\^H\^H\^H production tool.
 
 
-##How to use
+## How to use
 
 * `vi bin/make_me_an_artist`
 * (change design and configuration as wished)
